@@ -336,7 +336,7 @@
     width: 100%;
     min-height: 100vh;
     border-top: 3px solid var(--color-dark);
-    background-image: url('/flower-shop-static/images/hero.png');
+    background-image: url('/images/hero.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -587,7 +587,7 @@
     min-height: 500px;
     border-top: 3px solid var(--color-dark);
     border-bottom: 3px solid var(--color-dark);
-    background-image: url('/flower-shop-static/images/promo2.jpg');
+    background-image: url('/images/promo2.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
