@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа - BLOOM</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        /* Стили для модального окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .checkout-modal {
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            max-height: 800px;
+            background-color: var(--color-light);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .checkout-modal {
+            transform: scale(1);
+        }
+
+        /* Левая часть с картинкой */
+        .modal-left {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .left-content {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            right: 40px;
+            color: white;
+        }
+
+        .left-content h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            font-family: 'Lora', serif;
+        }
+
+        .left-content p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Правая часть с формой */
+        .modal-right {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background-color: var(--color-light);
+        }
+
+        .modal-right h2 {
+            font-size: 28px;
+            margin-bottom: 24px;
+            color: var(--color-dark);
+        }
+
+        /* Поля формы */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-dark);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-dark);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Секция содержимого заказа */
+        .order-summary {
+            background-color: #FBFBFB;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .order-summary h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--color-dark);
+        }
+
+        .order-items {
+            margin-bottom: 16px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item-name {
+            color: var(--color-dark);
+        }
+
+        .order-item-price {
+            color: var(--color-light-gray);
+        }
+
+        .order-total-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .order-total-line.total {
+            font-weight: 700;
+            font-size: 18px;
+            border-top: 2px solid #ddd;
+            margin-top: 8px;
+            padding-top: 12px;
+            color: var(--color-dark);
+        }
+
+        /* Кнопки */
+        .modal-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 14px;
+            background-color: transparent;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f5f5f5;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background-color: var(--color-dark);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #3a3f43;
+            transform: translateY(-2px);
+        }
+
+        /* Закрыть */
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Адаптация */
+        @media (max-width: 768px) {
+            .checkout-modal {
+                flex-direction: column;
+                height: auto;
+                max-height: 90%;
+            }
+            
+            .modal-left {
+                min-height: 200px;
+            }
+            
+            .modal-right {
+                padding: 24px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Кнопка для открытия модального окна (для теста) -->
+<button class="button-dark" onclick="openCheckoutModal()" style="margin: 100px auto; display: block;">
+    Оформить заказ
+</button>
+
+<!-- Модальное окно -->
+<div id="checkoutModal" class="modal-overlay">
+    <div class="checkout-modal">
+        <div class="close-modal" onclick="closeCheckoutModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+        
+        <!-- Левая часть с картинкой -->
+        <div class="modal-left">
+            <img src="/flower-shop-static/images/hero.png" alt="Цветы">
+            <div class="left-content">
+                <h3>Оформление заказа</h3>
+                <p>Заполните форму, и мы свяжемся с вами для подтверждения доставки</p>
+            </div>
+        </div>
+        
+        <!-- Правая часть с формой -->
+        <div class="modal-right">
+            <h2>Оформление заказа</h2>
+            
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label>ФИО</label>
+                    <input type="text" placeholder="Иванова Анна Сергеевна" value="Анна Иванова">
+                </div>
+                
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" placeholder="+7 (999) 123-45-67" value="+7 (999) 123-45-67">
+                </div>
+                
+                <div class="form-group">
+                    <label>Адрес доставки</label>
+                    <input type="text" placeholder="Улица, дом, квартира" value="г. Москва, ул. Цветочная, д.15, кв.42">
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий к заказу</label>
+                    <textarea placeholder="Пожелания по доставке, время и т.д.">Пожалуйста, позвоните за час до доставки</textarea>
+                </div>
+                
+                <!-- Содержимое заказа -->
+                <div class="order-summary">
+                    <h3>Содержимое заказа</h3>
+                    <div class="order-items">
+                        <div class="order-item">
+                            <span class="order-item-name">Лесная сказка (букет)</span>
+                            <span class="order-item-price">5 500 ₽</span>
+                        </div>
+                        <div class="order-item">
+                            <span class="order-item-name">Роза красная (2 шт)</span>
+                            <span class="order-item-price">200 ₽</span>
+                        </div>
+                        <div class="order-item">
+                            <span class="order-item-name">Тюльпан жёлтый (5 шт)</span>
+                            <span class="order-item-price">500 ₽</span>
+                        </div>
+                        <div class="order-item">
+                            <span class="order-item-name">Упаковка (Премиум)</span>
+                            <span class="order-item-price">300 ₽</span>
+                        </div>
+                        <div class="order-item">
+                            <span class="order-item-name">Открытка</span>
+                            <span class="order-item-price">150 ₽</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-total-line">
+                        <span>Товары (12 шт):</span>
+                        <span>9 198 ₽</span>
+                    </div>
+                    <div class="order-total-line">
+                        <span>Упаковка:</span>
+                        <span>100 ₽</span>
+                    </div>
+                    <div class="order-total-line">
+                        <span>Открытка:</span>
+                        <span>0 ₽</span>
+                    </div>
+                    <div class="order-total-line">
+                        <span>Доставка:</span>
+                        <span>0 ₽</span>
+                    </div>
+                    <div class="order-total-line total">
+                        <span>Итог:</span>
+                        <span>9 298 ₽</span>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeCheckoutModal()">Отмена</button>
+                    <button type="submit" class="btn-submit">Оформить заказ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openCheckoutModal() {
+        document.getElementById('checkoutModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeCheckoutModal() {
+        document.getElementById('checkoutModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Закрытие по клику на оверлей
+    document.getElementById('checkoutModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCheckoutModal();
+        }
+    });
+    
+    // Обработка отправки формы
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Спасибо за заказ! Мы свяжемся с вами в ближайшее время.');
+        closeCheckoutModal();
+    });
+</script>
+
+</body>
+</html>
