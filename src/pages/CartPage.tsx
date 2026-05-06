@@ -8,7 +8,7 @@ export const CartPage = () => {
   const { 
     cart, 
     totalPrice, 
-    clearCart, 
+    // clearCart, 
     applyPromoCode, 
     promoDiscount,
     updateQuantity,

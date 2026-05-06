@@ -1,29 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { Product, CartItem, PackagingOption } from '../types';
+import type { Product, CartItem } from '../types';
 import { packagingOptions } from '../types';
-
-const packagingProduct: Product = {
-  id: 999,
-  name: 'Упаковка: Стандартная',
-  price: 0,
-  stock: 999,
-  type: 'packaging',
-  image: '/images/package.png',
-  category: 'extra',
-  isExtra: true
-};
-
-const cardProduct: Product = {
-  id: 998,
-  name: 'Открытка',
-  price: 150,
-  stock: 999,
-  type: 'card',
-  image: '/images/card.png',
-  category: 'extra',
-  isExtra: true
-};
+import { packagingProduct, cardProduct } from '../constants/products';
 
 interface CartContextType {
   cart: CartItem[];
@@ -45,7 +24,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [promoCode, setPromoCode] = useState<string | null>(null);
+  // const [promoCode, setPromoCode] = useState<string | null>(null);
   const [promoDiscount, setPromoDiscount] = useState<number>(0);
 
   const hasCard = cart.some(item => item.type === 'card');
@@ -55,15 +34,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     const savedPromo = localStorage.getItem('promoCode');
+    
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        const parsedCart = JSON.parse(savedCart);
+        if (parsedCart.length > 0) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setCart(parsedCart);
+        }
       } catch (e) {
         console.error('Ошибка загрузки корзины', e);
       }
     }
     if (savedPromo) {
-      setPromoCode(savedPromo);
+      // setPromoCode(savedPromo);
       setPromoDiscount(0.1);
     }
   }, []);
@@ -184,13 +168,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = () => {
     setCart([]);
-    setPromoCode(null);
+    // setPromoCode(null);
     setPromoDiscount(0);
   };
 
   const applyPromoCode = (code: string): boolean => {
     if (code === 'СКИДКА10') {
-      setPromoCode(code);
+      // setPromoCode(code);
       setPromoDiscount(0.1);
       alert('Промокод применен! Скидка 10%');
       return true;
@@ -221,7 +205,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     </CartContext.Provider>
   );
 };
-
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => {
   const context = React.useContext(CartContext);
   if (!context) {

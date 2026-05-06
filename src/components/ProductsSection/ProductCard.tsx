@@ -19,17 +19,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     setQuantity(1);
   };
 
-  const incrementQuantity = () => {
-    if (quantity < product.stock) {
-      setQuantity(prev => prev + 1);
-    }
-  };
+  // const incrementQuantity = () => {
+  //   if (quantity < product.stock) {
+  //     setQuantity(prev => prev + 1);
+  //   }
+  // };
 
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    }
-  };
+  // const decrementQuantity = () => {
+  //   if (quantity > 1) {
+  //     setQuantity(prev => prev - 1);
+  //   }
+  // };
 
   const isFlower = product.type === 'flower';
   const isOutOfStock = product.stock === 0;
